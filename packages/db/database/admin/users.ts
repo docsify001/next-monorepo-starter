@@ -2,7 +2,7 @@ import { and, asc, desc, eq, like, or, sql } from "drizzle-orm";
 import { db } from "index";
 import { accounts, users } from "schema";
 import { User } from "types/zod/users";
-import { zCreateUserSchema, zUpdateUserSchema, zSearchUsersSchema } from "types";
+import { zCreateUserSchema } from "types";
 /**
  * Fetch user by email.
  *

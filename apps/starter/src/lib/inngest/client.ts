@@ -52,15 +52,6 @@ const GithubRepoEndEventSchema = z.object({
   error: z.string().optional(), // 抓取的错误
   detail: z.object({
     favicon: z.string(),
-    version: z.string(), //当前版本
-    features: z.array(z.string()), //特性
-    readme: z.string(), //readme.md内容
-    license: z.string(), //license
-    stars: z.number(), //star数量
-    forks: z.number(), //fork数量
-    issues: z.number(), //issue数量
-    pullRequests: z.number(), //pull request数量
-    contributors: z.number(), //贡献者数量
     languages: z.array(z.string()),
     topics: z.array(z.string()),
     lastCommit: z.string(),
