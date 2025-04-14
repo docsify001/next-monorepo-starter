@@ -1,0 +1,17 @@
+{
+  "name": "@repo/github",
+  "version": "0.1.0",
+  "exports": {
+    ".": "./index.ts",
+    "./client": "./client.ts"
+  },
+  "dependencies": {
+    "@octokit/graphql": "^8.2.1",
+    "date-fns": "^4.1.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.13.9",
+    "@repo/typescript-config": "workspace:*",
+    "typescript": "^5.7.3"
+  }
+}
