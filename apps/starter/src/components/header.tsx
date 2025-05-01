@@ -24,12 +24,12 @@ export function Header() {
               fillRule="evenodd"
             />
           </svg>
-          BETTER-AUTH. STARTER
+          Nextjs Monorepo Starter
         </Link>
 
         <div className="flex items-center gap-2">
           <Link
-            href="https://github.com/daveyplate/better-auth-nextjs-starter"
+            href="https://github.com/docsify001/next-monorepo-starter"
             target="_blank"
           >
             <Button variant="outline" size="icon" className="size-8 rounded-full">
