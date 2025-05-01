@@ -1,28 +1,15 @@
 import { and, asc, desc, eq, like, or, sql } from "drizzle-orm";
-import { db } from "index";
-import { accounts, users } from "schema";
-import { User } from "types/zod/users";
-import { zCreateUserSchema } from "types";
+import { db } from "../../index";
+import { accounts, users } from "../../schema";
+import { zCreateUserSchema, zSearchUsersSchema, zUpdateUserSchema } from "../../types";
+import { createId } from "@paralleldrive/cuid2";
 /**
  * Fetch user by email.
  *
  * @param email - The user's email address.
  * @returns The user or null if not found.
  */
-export async function getUserByEmail(email: string): Promise<
-  | {
-    id: string;
-    name: string | null;
-    email: string | null;
-    password: string | null;
-    status: "suspended" | "disabled" | "active" | "onboarding" | null;
-    emailVerified: Date | null;
-    stripeCustomerId: string | null;
-    image: string | null;
-    createdAt: Date | null;
-  }
-  | undefined
-> {
+export async function getUserByEmail(email: string) {
   try {
     return await db.query.users.findFirst({
       where(fields, operators) {
@@ -41,22 +28,7 @@ export async function getUserByEmail(email: string): Promise<
  * @param id - The user's ID.
  * @returns The user or null if not found.
  */
-export async function getUserById(id: string): Promise<
-  | {
-    id: string;
-    name: string | null;
-    email: string | null;
-    password: string | null;
-    status: "suspended" | "disabled" | "active" | "onboarding" | null;
-    emailVerified: Date | null;
-    phone: string | null;
-    phoneVerified: Date | null;
-    stripeCustomerId: string | null;
-    image: string | null;
-    createdAt: Date | null;
-  }
-  | undefined
-> {
+export async function getUserById(id: string) {
   try {
     return await db.query.users.findFirst({
       where(fields, operators) {
@@ -78,7 +50,7 @@ export async function getUserById(id: string): Promise<
 export async function verifyUserEmail(
   id: string,
   email?: string
-): Promise<void> {
+) {
   console.info("[users.ts] [verifyUserEmail] 开始验证");
   const now = new Date();
   try {
@@ -106,24 +78,39 @@ export async function createUser(user: {
   email: string;
   password: string;
   name: string;
-}): Promise<User | null> {
+}) {
+  const now = new Date();
   const [newUser] = await db
     .insert(users)
-    .values(user)
+    .values({
+      ...user,
+      id: createId(), // 需要导入 createId
+      emailVerified: false,
+      createdAt: now,
+      updatedAt: now,
+    })
     .onConflictDoNothing()
     .returning();
   return newUser ?? null;
 }
 
-
 export async function createUserByPhone(user: {
-  phone: string;
+  phoneNumber: string; // 改为 phoneNumber 以匹配数据库 schema
   password: string;
   name: string;
 }) {
+  const now = new Date();
   const [newUser] = await db
     .insert(users)
-    .values(user)
+    .values({
+      ...user,
+      id: createId(),
+      email: `${user.phoneNumber}@starter.com`, // Provide a default value for email
+      emailVerified: false,
+      phoneNumberVerified: false,
+      createdAt: now,
+      updatedAt: now,
+    })
     .onConflictDoNothing()
     .returning();
   return newUser ?? null;
@@ -199,11 +186,11 @@ export async function getUserByPhone(phone: string) {
 export const usersDataAccess = {
   // 创建用户
   create: async (data: typeof zCreateUserSchema._type) => {
-    return db.insert(users).values(data).returning();
+    return db.insert(users).values({ ...data, id: data.id ?? createId() }).returning();
   },
 
   // 更新用户
-  update: async (id: string, data: typeof updateUserSchema._type) => {
+  update: async (id: string, data: typeof zUpdateUserSchema._type) => {
     return db
       .update(users)
       .set(data)
@@ -219,8 +206,8 @@ export const usersDataAccess = {
   },
 
   // 搜索用户
-  search: async (params: typeof searchUsersSchema._type) => {
-    const { query, page = 1, limit = 10, field, order, status, role } = params;
+  search: async (params: typeof zSearchUsersSchema._type) => {
+    const { query, page = 1, limit = 10, field, order, banned, role } = params;
     const offset = (page - 1) * limit;
 
     // 构建查询条件
@@ -235,8 +222,12 @@ export const usersDataAccess = {
       );
     }
 
-    if (status) {
-      conditions.push(eq(users.status, status));
+    if (banned !== undefined) {
+      conditions.push(eq(users.banned, banned));
+    }
+
+    if (role) {
+      conditions.push(eq(users.role, role));
     }
 
     // 构建排序条件

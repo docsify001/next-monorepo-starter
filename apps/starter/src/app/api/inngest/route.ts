@@ -1,5 +1,5 @@
 import { serve } from 'inngest/next';
-import { handleGithubRepoStartProgress, handleWebsiteContentStarted } from '@/lib/inngest/handler';
+import { handleWebsiteContentStarted } from '@/lib/inngest/handler';
 import { inngest } from '@/lib/inngest/client';
 
 if (!process.env.INNGEST_SIGNING_KEY) {
@@ -15,6 +15,5 @@ export const { GET, POST, PUT } = serve({
   client: inngest,
   functions: [
     handleWebsiteContentStarted,
-    handleGithubRepoStartProgress,
   ],
 }); 

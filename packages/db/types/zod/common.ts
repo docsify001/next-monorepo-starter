@@ -27,20 +27,6 @@ export const zSearchSchema = z.object({
   ...zSortSchema.shape,
 });
 
-// 枚举类型定义
-export const zInvoiceTypeEnum = z.enum(["personal", "company"]);
-export const zInvoiceStatusEnum = z.enum(["pending", "issued", "sent"]);
-
-
-// 支付状态枚举
-export const zPaymentStatusEnum = z.enum(["pending", "completed", "failed", "refunded"])
-
-// 支付类型枚举
-export const zPaymentTypeEnum = z.enum(["ad", "subscription", "service", "other"])
-
-// 支付方法枚举
-export const zPaymentMethodEnum = z.enum(["wechat", "alipay", "bank_transfer"])
-
 // 资产类型枚举
 export const zAssetTypeEnum = z.enum(["unknown", "avatar", "banner", "icon", "logo", "image", "document"])
 
@@ -52,8 +38,3 @@ export type Sort = z.infer<typeof zSortSchema>;
 export type Search = z.infer<typeof zSearchSchema>;
 
 export type AssetType = z.infer<typeof zAssetTypeEnum>
-export type InvoiceType = z.infer<typeof zInvoiceTypeEnum>
-export type InvoiceStatus = z.infer<typeof zInvoiceStatusEnum>
-export type PaymentStatus = z.infer<typeof zPaymentStatusEnum>
-export type PaymentType = z.infer<typeof zPaymentTypeEnum>
-export type PaymentMethod = z.infer<typeof zPaymentMethodEnum>

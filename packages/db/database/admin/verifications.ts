@@ -1,7 +1,7 @@
 import { createId } from "@paralleldrive/cuid2";
 import { verifications } from "@repo/db/schema";
 import { eq } from "drizzle-orm";
-import { db } from "index";
+import { db } from "../../index";
 
 const generateCode = () => Math.floor(Math.random() * 900000) + 100000
 

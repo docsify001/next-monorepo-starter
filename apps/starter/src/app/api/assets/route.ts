@@ -55,10 +55,10 @@ export async function POST(request: NextRequest) {
     });
 
     return Response.json({
-      assetId: asset.id,
-      contentType: asset.contentType,
-      fileName: asset.fileName,
-      size: asset.size,
+      assetId: asset?.id,
+      contentType: asset?.contentType,
+      fileName: asset?.fileName,
+      size: asset?.size,
     });
   } catch (error) {
     console.error("上传文件失败:", error);
